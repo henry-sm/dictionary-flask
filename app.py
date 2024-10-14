@@ -26,6 +26,25 @@ def modify():
         app.logger.error(f"Error fetching flashcards: {e}")
         return f"Error fetching flashcards: {e}"
 
+
+@app.route('/find_word', methods=['POST'])
+def find_word():
+    try:
+        word = request.form.get('word')
+        flashcard = mongo.db.flashcards.find_one({'word': word})
+        result = mongo.db.flashcards.delete_one({'word': word})
+        if result:
+            if result.deleted_count:
+                return render_template('modify.html', flashcards=mongo.db.flashcards.find(), message=f"Flashcard '{word}' deleted")
+            else:
+                return render_template('modify.html', flashcards=mongo.db.flashcards.find(), warning="Word not in database")
+        else:
+            return render_template('modify.html', flashcards=mongo.db.flashcards.find(), warning="Word not found")
+    except Exception as e:
+        app.logger.error(f"Error finding flashcard: {e}")
+        return f"Error finding flashcard: {e}"
+
+
 @app.route('/test')
 def test():
     try:

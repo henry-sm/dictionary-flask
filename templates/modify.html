@@ -13,17 +13,19 @@
         <input type="text" name="figure_of_speech" placeholder="Figure of Speech" required>
         <button type="submit">Add Flashcard</button>
     </form>
-    <ul>    
+    <h2>Find a Word to Delete</h2>
+    <form action="/find_word" method="POST">
+        <input type="text" name="word" placeholder="Word to Delete" required>
+        <button type="submit">Find Word</button>
+    </form>
+
+    <ul>
         {% for flashcard in flashcards %}
             <li>
                 {{ flashcard.word }}: {{ flashcard.meaning }} ({{ flashcard.figure_of_speech }})
-                <form action="/flashcard/{{ flashcard.word }}" method="post" style="display:inline;">
-                    <input type="hidden" name="_method" value="DELETE">
-                    <button type="submit">Delete</button>
-                </form>
             </li>
         {% endfor %}
-    </ul>
+    </ul>s
     <a href="/">Back to Home</a>
 </body>
 </html>
