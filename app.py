@@ -5,14 +5,18 @@ app = Flask(__name__)
 app.config["MONGO_URI"] = "mongodb://localhost:27017/flashcard_db"
 mongo = PyMongo(app)
 
-#the autocorrect said to add error handling with try and expect else nothing was working for me
+#while adding try/catch is good, i don't know why it doesn't work if i removed them
 
 
 @app.route('/')
 def index():
     try:
-        flashcards = mongo.db.flashcards.find()
-        return render_template('index.html', flashcards=flashcards)
+        flashcard = list(mongo.db.flashcards.aggregate([{'$sample': {'size': 1}}]))  # Get a random flashcard
+        if flashcard:
+            flashcard = flashcard[0]
+        else:
+            flashcard = None
+        return render_template('index.html', flashcard=flashcard)
     except Exception as e:
         app.logger.error(f"Error fetching flashcards: {e}")
         return f"Error fetching flashcards: {e}"
