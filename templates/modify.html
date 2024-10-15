@@ -4,28 +4,65 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modify Flashcards</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <h1>Modify Flashcards</h1>
-    <form action="/add" method="POST">
-        <input type="text" name="word" placeholder="Word" required>
-        <input type="text" name="meaning" placeholder="Meaning" required>
-        <input type="text" name="figure_of_speech" placeholder="Figure of Speech" required>
-        <button type="submit">Add Flashcard</button>
-    </form>
-    <h2>Find a Word to Delete</h2>
-    <form action="/find_word" method="POST">
-        <input type="text" name="word" placeholder="Word to Delete" required>
-        <button type="submit">Find & Delete Word</button>
-    </form>
+    <div class="container">
+        <h1>Modify Flashcards</h1>
+        
+        <h2>Add a New Word</h2>
+        <form action="/add" method="POST">
+            <input type="text" name="word" placeholder="Word" required>
+            <input type="text" name="meaning" placeholder="Meaning" required>
+            <input type="text" name="figure_of_speech" placeholder="Figure of Speech" required>
+            <button type="submit">Add Flashcard</button>
+        </form>
+        
+        <h2>Find and Delete a Word</h2>
+        <form action="/find_word" method="POST">
+            <input type="text" name="word" placeholder="Word to Delete" required>
+            <button type="submit">Find & Delete Word</button>
+        </form>
 
-    <ul>
-        {% for flashcard in flashcards %}
-            <li>
-                {{ flashcard.word }}: {{ flashcard.meaning }} ({{ flashcard.figure_of_speech }})
-            </li>
-        {% endfor %}
-    </ul>s
-    <a href="/">Back to Home</a>
+        <h2>Flashcards</h2>
+        <div class="table-container">
+            <table id="flashcardsTable">
+                <thead>
+                    <tr>
+                        <th><a href="{{ url_for('modify', sort_by='word', sort_order='asc' if sort_by != 'word' or sort_order == -1 else 'desc', page=page) }}">Word</a></th>
+                        <th>Meaning</th>
+                        <th><a href="{{ url_for('modify', sort_by='figure_of_speech', sort_order='asc' if sort_by != 'figure_of_speech' or sort_order == -1 else 'desc', page=page) }}">Figure of Speech</a></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for flashcard in flashcards %}
+                        <tr>
+                            <td>{{ flashcard.word }}</td>
+                            <td>{{ flashcard.meaning }}</td>
+                            <td>{{ flashcard.figure_of_speech }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination">
+            {% if page > 1 %}
+                <a href="{{ url_for('modify', sort_by=sort_by, sort_order=sort_order, page=page-1) }}">&laquo; Previous</a>
+            {% endif %}
+            {% for p in range(1, total_pages + 1) %}
+                {% if p == page %}
+                    <span>{{ p }}</span>
+                {% else %}
+                    <a href="{{ url_for('modify', sort_by=sort_by, sort_order=sort_order, page=p) }}">{{ p }}</a>
+                {% endif %}
+            {% endfor %}
+            {% if page < total_pages %}
+                <a href="{{ url_for('modify', sort_by=sort_by, sort_order=sort_order, page=page+1) }}">Next &raquo;</a>
+            {% endif %}
+        </div>
+
+        <a href="/" class="back-link">Back to Home</a>
+    </div>
 </body>
 </html>

@@ -7,20 +7,22 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <h1>Flashcards</h1>
-    <nav>
-        <a href="/modify">Modify</a> | 
-        <a href="/test">Test</a>
-    </nav>
-    <div class="container">
-        {% if flashcard %}
-            <div class="word">{{ flashcard.word }}</div>
-            <div class="figure-of-speech">{{ flashcard.figure_of_speech }}</div>
-            <div class="meaning">{{ flashcard.meaning }}</div>
-        {% else %}
-            <p>No flashcards available.</p>
-        {% endif %}
-        <a href="/modify" class="back-link">Modify Flashcards</a>
+    <h1>Dictionary Flashcards</h1>
+    <div class="flex-container">
+        <nav class="nav">
+            <button onclick="location.href='/modify'" class="nav-button">Modify</button>
+            <button onclick="location.href='/test'" class="nav-button">Test</button>
+        </nav>
+        <div class="container">
+            {% if flashcard %}
+                <div class="word">{{ flashcard.word }}</div>
+                <div class="figure-of-speech">{{ flashcard.figure_of_speech }}</div>
+                <div class="meaning">{{ flashcard.meaning }}</div>
+            {% else %}
+                <p>No flashcards available.</p>
+            {% endif %}
+            <a href="/" class="back-link">Random Flashcard</a>
+        </div>
     </div>
 </body>
 </html>

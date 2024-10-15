@@ -24,8 +24,17 @@ def index():
 @app.route('/modify')
 def modify():
     try:
-        flashcards = mongo.db.flashcards.find().sort("figure_of_speech")
-        return render_template('modify.html', flashcards=flashcards)
+        sort_by = request.args.get('sort_by', 'word')  # Default sort by word
+        sort_order = request.args.get('sort_order', 'asc')  # Default sort order ascending
+        sort_order = 1 if sort_order == 'asc' else -1
+        page = int(request.args.get('page', 1))
+        per_page = 25
+
+        flashcards = mongo.db.flashcards.find().sort(sort_by, sort_order).skip((page - 1) * per_page).limit(per_page)
+        total_flashcards = mongo.db.flashcards.count_documents({})
+        total_pages = (total_flashcards + per_page - 1) // per_page
+
+        return render_template('modify.html', flashcards=flashcards, sort_by=sort_by, sort_order=sort_order, page=page, total_pages=total_pages)
     except Exception as e:
         app.logger.error(f"Error fetching flashcards: {e}")
         return f"Error fetching flashcards: {e}"
@@ -107,7 +116,7 @@ def delete_flashcard(word):
 @app.route('/check_db')
 def check_db():
     try:
-        # Attempt to fetch a document from the collection
+        #  to fetch a document from the collection
         mongo.db.flashcards.find_one()
         return "Database connection successful!"
     except Exception as e:
