@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for
 from flask_pymongo import PyMongo
+import random
 
 app = Flask(__name__)
 app.config["MONGO_URI"] = "mongodb://localhost:27017/flashcard_db"
@@ -11,7 +12,7 @@ mongo = PyMongo(app)
 @app.route('/')
 def index():
     try:
-        flashcard = list(mongo.db.flashcards.aggregate([{'$sample': {'size': 1}}]))  # Get a random flashcard
+        flashcard = list(mongo.db.flashcards.aggregate([{'$sample': {'size': 1}}]))  #  random flashcard
         if flashcard:
             flashcard = flashcard[0]
         else:
@@ -24,8 +25,8 @@ def index():
 @app.route('/modify')
 def modify():
     try:
-        sort_by = request.args.get('sort_by', 'word')  # Default sort by word
-        sort_order = request.args.get('sort_order', 'asc')  # Default sort order ascending
+        sort_by = request.args.get('sort_by', 'word')  #  sort by word
+        sort_order = request.args.get('sort_order', 'asc')  #sort order ascending
         sort_order = 1 if sort_order == 'asc' else -1
         page = int(request.args.get('page', 1))
         per_page = 25
@@ -40,12 +41,16 @@ def modify():
         return f"Error fetching flashcards: {e}"
 
 
-@app.route('/find_word', methods=['POST'])
-def find_word():
+@app.route('/findel_word', methods=['POST'])
+def findel_word():
     try:
         word = request.form.get('word')
-        flashcard = mongo.db.flashcards.find_one({'word': word})
+        #flashcard = mongo.db.flashcards.find_one({'word': word})
         result = mongo.db.flashcards.delete_one({'word': word})
+        
+        # page is undefined ...?
+ 
+
         if result:
             if result.deleted_count:
                 return render_template('modify.html', flashcards=mongo.db.flashcards.find(), message=f"Flashcard '{word}' deleted")
@@ -53,19 +58,58 @@ def find_word():
                 return render_template('modify.html', flashcards=mongo.db.flashcards.find(), warning="Word not in database")
         else:
             return render_template('modify.html', flashcards=mongo.db.flashcards.find(), warning="Word not found")
+        
     except Exception as e:
         app.logger.error(f"Error finding flashcard: {e}")
         return f"Error finding flashcard: {e}"
 
-
-@app.route('/test')
-def test():
+@app.route('/find', methods=['POST'])
+def find():
     try:
-        flashcards = mongo.db.flashcards.find()
-        return render_template('test.html', flashcards=flashcards)
+        word = request.args.get('word')
+        flashcard = mongo.db.flashcards.find_one({'word': word})
+        if flashcard:
+            return jsonify({'word': flashcard['word'], 'meaning': flashcard['meaning'], 'figure_of_speech': flashcard['figure_of_speech']})
+        else:
+            return jsonify({'error': 'Word not found'})
+    except Exception as e:
+        app.logger.error(f"Error finding flashcard: {e}")
+        return jsonify({'error': f"Error finding flashcard: {e}"})
+    
+
+@app.route('/quiz')
+def quiz():
+    try:
+        flashcards = list(mongo.db.flashcards.aggregate([{'$sample': {'size': 5}}]))  # get 5 random and quiz them
+        all_flashcards = list(mongo.db.flashcards.find({}))
+        for flashcard in flashcards:
+            incorrect_options = random.sample([fc['meaning'] for fc in all_flashcards if fc['word'] != flashcard['word']], 3)
+            flashcard['options'] = incorrect_options + [flashcard['meaning']]
+            random.shuffle(flashcard['options'])
+        return render_template('quiz.html', flashcards=flashcards)
     except Exception as e:
         app.logger.error(f"Error fetching flashcards: {e}")
         return f"Error fetching flashcards: {e}"
+
+@app.route('/check_answers', methods=['POST'])
+def check_answers():
+    try:
+        results = []
+        for i in range(1, 6):
+            word = request.form.get(f'word_{i}')
+            user_meaning = request.form.get(f'meaning_{word}')
+            flashcard = mongo.db.flashcards.find_one({'word': word})
+            correct_meaning = flashcard['meaning'] if flashcard else None
+            results.append({
+                'word': word,
+                'user_meaning': user_meaning,
+                'correct_meaning': correct_meaning,
+                'is_correct': user_meaning == correct_meaning if correct_meaning else False
+            })
+        return render_template('results.html', results=results)
+    except Exception as e:
+        app.logger.error(f"Error checking answers: {e}")
+        return f"Error checking answers: {e}"
 
 @app.route('/add', methods=['POST'])
 def add_flashcard():
@@ -122,6 +166,9 @@ def check_db():
     except Exception as e:
         app.logger.error(f"Database connection failed: {e}")
         return f"Database connection failed: {e}"
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

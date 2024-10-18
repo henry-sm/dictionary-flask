@@ -17,14 +17,20 @@
             <input type="text" name="figure_of_speech" placeholder="Figure of Speech" required>
             <button type="submit">Add Flashcard</button>
         </form>
-        
-        <h2>Find and Delete a Word</h2>
-        <form action="/find_word" method="POST">
-            <input type="text" name="word" placeholder="Word to Delete" required>
-            <button type="submit">Find & Delete Word</button>
+
+
+        <h2>Find or Delete Word</h2>
+        <form action="/find" method="POST">
+            <input type="text" name="word" placeholder="Word to Find" required>
+            <button type="submit">Find Word</button>
         </form>
 
-        <h2>Flashcards</h2>
+        <form action="/findel_word" method="POST">
+            <input type="text" name="word" placeholder="Word to Delete" required>
+            <button type="submit">Delete Word</button>
+        </form>
+
+        <h2>List of Words in Flashcards</h2>
         <div class="table-container">
             <table id="flashcardsTable">
                 <thead>

@@ -7,11 +7,13 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <h1>Dictionary Flashcards</h1>
+   
     <div class="flex-container">
+        
+        <h1>Dictionary Flashcards</h1>
         <nav class="nav">
             <button onclick="location.href='/modify'" class="nav-button">Modify</button>
-            <button onclick="location.href='/test'" class="nav-button">Test</button>
+            <button onclick="location.href='/quiz'" class="nav-button">Test</button>
         </nav>
         <div class="container">
             {% if flashcard %}
