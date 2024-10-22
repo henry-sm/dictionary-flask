@@ -5,31 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <script>
 
-    function check(i, answer){
-        console.log(answer);
-        console.log(i, i === answer, i==answer);
-        //find out why i==answer is not working
-        if (i === answer){
+    <script>
+    function check(i, answer) {
+        //console.log(answer);
+        //console.log(i, i === answer, i == answer);
+        // Find out why i == answer is not working
+        i = i.trim().toLowerCase();
+        answer = answer.trim().toLowerCase();
+        // trim works gg
+        //console.log(i === answer, i == answer);
+        if (i === answer) {
             alert("Correct Answer!");
-        }
-        else{
-            alert("Wrong, try again!",answer);
+        } else {
+            alert("Wrong, try again!");
         }
     }
     </script>
+
 </head>
+
+
 <body>
+
     <div class="container">
-        <h1>Find meaning of "{{word}}" </h1>
+        <h1>Find the meaning of "{{ word }}"</h1>
         <nav class="nav">
             {% for i in options %}
-            <button  class="nav-button" onclick="check('{{i}}',' {{answer}}')"> {{i}}</button>
+            <button class="nav-button" onclick="check('{{ i }}', '{{ answer }}')">{{ i }}</button>
             {% endfor %}
-
         </nav>
-        <a href="/" class="back-link">Back to Home</a>
+        <a href="/" class="back-link">Back to Home</a><br>
+        <a href="/quiz" class="back-link">Another Word</a>
     </div>
+
 </body>
+
 </html>

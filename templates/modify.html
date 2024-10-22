@@ -9,7 +9,10 @@
 <body>
     <div class="container">
         <h1>Modify Flashcards</h1>
-        
+
+        {% if message %}
+        <script>console.log('{{ message }} added')</script>>
+       {% endif %}
         <h2>Add a New Word</h2>
         <form action="/add" method="POST">
             <input type="text" name="word" placeholder="Word" required>

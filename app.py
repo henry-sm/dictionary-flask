@@ -65,7 +65,7 @@ def findel_word():
             return render_template('modify.html', message=f"Flashcard '{word}' deleted", flashcards=flashcards, sort_by=sort_by, sort_order=sort_order, page=page, total_pages=total_pages)
             
         else:
-            return render_template('modify.html', warning="Word not found", flashcards=flashcards, sort_by=sort_by, sort_order=sort_order, page=page, total_pages=total_pages)
+            return render_template('modify.html', message ="Word not found", flashcards=flashcards, sort_by=sort_by, sort_order=sort_order, page=page, total_pages=total_pages)
         
     except Exception as e:
         app.logger.error(f"Error finding flashcard: {e}")
@@ -80,10 +80,10 @@ def find():
         #word = request.args.get('word')
         print(word)
         flashcard = mongo.db.flashcards.find_one({'word': word})
-        if flashcard: 
+        if flashcard:
             return render_template('find.html', flashcard=flashcard)
         else:
-            return render_template('index.html', error="Word not found")
+            return render_template('find.html', error="Word not found")
     except Exception as e:
         app.logger.error(f"Error finding flashcard: {e}")
         return jsonify({'error': f"Error finding flashcard: {e}"})
@@ -137,7 +137,7 @@ def add_flashcard():
         word = request.form.get('word')
         meaning = request.form.get('meaning')
         figure_of_speech = request.form.get('figure_of_speech')
-        print(f"Received data - Word: {word}, Meaning: {meaning}, Figure of Speech: {figure_of_speech}")
+        #print(f"Received data - Word: {word}, Meaning: {meaning}, Figure of Speech: {figure_of_speech}")
         if word and meaning and figure_of_speech:
             mongo.db.flashcards.insert_one({
                 'word': word,
@@ -147,7 +147,7 @@ def add_flashcard():
             print("Flashcard added to the database")
         else:
             print("Missing data, flashcard not added")
-        return redirect(url_for('modify'))
+        return redirect(url_for('modify', message = "Flashcard added"))
     except Exception as e:
         app.logger.error(f"Error adding flashcard: {e}")
         return f"Error adding flashcard: {e}"

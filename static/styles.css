@@ -166,7 +166,7 @@ tr:hover {
 }
 
 
-.error {
-    color: red;
+.message {
+    text-align: center;
     font-weight: bold;
 }

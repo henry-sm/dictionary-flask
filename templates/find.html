@@ -13,8 +13,14 @@
             <div class="figure-of-speech">{{ flashcard.figure_of_speech }}</div>
             <div class="meaning">{{ flashcard.meaning }}</div>
         {% else %}
-        <p class="error">{{ error }}</p>
+
+        <p class="error">{{ error }}
+            <br>
+            <a href="/modify" class="back-link">Add it to the Wordbank</a>
+        </p>
+        
         {% endif %}
+        
         <a href="/" class="back-link">Random Flashcard</a>
     </div>
     
