@@ -7,21 +7,27 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <script>
 
-    function win(){
-    alert("WRONG!");
-    }
-
-    function los(){
-    alert("RIGHT!");
+    function check(i, answer){
+        console.log(answer);
+        console.log(i, i === answer, i==answer);
+        //find out why i==answer is not working
+        if (i === answer){
+            alert("Correct Answer!");
+        }
+        else{
+            alert("Wrong, try again!",answer);
+        }
     }
     </script>
 </head>
 <body>
     <div class="container">
-        <h1>Question : 1+1 = ? </h1>
+        <h1>Find meaning of "{{word}}" </h1>
         <nav class="nav">
-            <button  class="nav-button" onclick="win()"> 1</button>
-            <button  class="nav-button" onclick="los()"> 2</button>
+            {% for i in options %}
+            <button  class="nav-button" onclick="check('{{i}}',' {{answer}}')"> {{i}}</button>
+            {% endfor %}
+
         </nav>
         <a href="/" class="back-link">Back to Home</a>
     </div>

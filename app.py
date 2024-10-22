@@ -75,7 +75,10 @@ def findel_word():
 @app.route('/find', methods=['POST'])
 def find():
     try:
-        word = request.args.get('word')
+        
+        word = request.form.get('word')
+        #word = request.args.get('word')
+        print(word)
         flashcard = mongo.db.flashcards.find_one({'word': word})
         if flashcard: 
             return render_template('find.html', flashcard=flashcard)
@@ -89,13 +92,21 @@ def find():
 @app.route('/quiz')
 def quiz():
     try:
-        flashcards = list(mongo.db.flashcards.aggregate([{'$sample': {'size': 5}}]))  # get 5 random and quiz them
-        all_flashcards = list(mongo.db.flashcards.find({}))
+        flashcards = list(mongo.db.flashcards.aggregate([{'$sample': {'size': 4}}]))  # get 5 random and quiz them
+        word = flashcards[0]['word']
+        answer = flashcards[0]['meaning']
+        options = [flashcards[0]['meaning'], flashcards[1]['meaning'], flashcards[2]['meaning'], flashcards[3]['meaning'] ]
+        random.shuffle(options)
+        print(answer, options)
+        #all_flashcards = list(mongo.db.flashcards.find({}))
+        #print(flashcards)
+        """
         for flashcard in flashcards:
             incorrect_options = random.sample([fc['meaning'] for fc in all_flashcards if fc['word'] != flashcard['word']], 3)
             flashcard['options'] = incorrect_options + [flashcard['meaning']]
             random.shuffle(flashcard['options'])
-        return render_template('quiz.html', flashcards=flashcards)
+        """
+        return render_template('quiz.html', word = word, answer = answer, options = options)
     except Exception as e:
         app.logger.error(f"Error fetching flashcards: {e}")
         return f"Error fetching flashcards: {e}"

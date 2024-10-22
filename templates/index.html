@@ -19,7 +19,7 @@
         <nav class="nav">
 
             <button onclick="location.href='/modify'" class="nav-button">View Wordbank</button>
-            <button onclick="location.href='/quiz'" class="nav-button">Quiz</button>
+            <button onclick="location.href='/quiz'" class="nav-button">Quiz a Random Word</button>
         </nav>
         <div class="container">
             {% if flashcard %}
@@ -27,7 +27,7 @@
                 <div class="figure-of-speech">{{ flashcard.figure_of_speech }}</div>
                 <div class="meaning">{{ flashcard.meaning }}</div>
             {% else %}
-                <p>No flashcards available.</p>
+                <p>Word does not exist in database.</p>
             {% endif %}
             <a href="/" class="back-link">Random Flashcard</a>
         </div>
