@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for
 from flask_pymongo import PyMongo
-import random
+import random, traceback
 
 app = Flask(__name__)
 app.config["MONGO_URI"] = "mongodb://localhost:27017/flashcard_db"
@@ -47,17 +47,29 @@ def findel_word():
         word = request.form.get('word')
         #flashcard = mongo.db.flashcards.find_one({'word': word})
         result = mongo.db.flashcards.delete_one({'word': word})
-        print(result)
-        # page is undefined ...?
- 
 
+        # page is undefined ...?
+        
+        sort_by = request.args.get('sort_by', 'word')  #  sort by word
+        sort_order = request.args.get('sort_order', 'asc')  #sort order ascending
+        sort_order = 1 if sort_order == 'asc' else -1
+        page = int(request.args.get('page', 1))
+        per_page = 25
+
+        flashcards = mongo.db.flashcards.find().sort(sort_by, sort_order).skip((page - 1) * per_page).limit(per_page)
+        total_flashcards = mongo.db.flashcards.count_documents({})
+        total_pages = (total_flashcards + per_page - 1) // per_page
+        # ^ do that work?
+        
         if result:
-                return render_template('modify.html', flashcards=mongo.db.flashcards.find(), message=f"Flashcard '{word}' deleted")
+            return render_template('modify.html', message=f"Flashcard '{word}' deleted", flashcards=flashcards, sort_by=sort_by, sort_order=sort_order, page=page, total_pages=total_pages)
+            
         else:
-            return render_template('modify.html', flashcards=mongo.db.flashcards.find(), warning="Word not found")
+            return render_template('modify.html', warning="Word not found", flashcards=flashcards, sort_by=sort_by, sort_order=sort_order, page=page, total_pages=total_pages)
         
     except Exception as e:
         app.logger.error(f"Error finding flashcard: {e}")
+        traceback.print_exc()
         return f"Error finding flashcard: {e}"
 
 @app.route('/find', methods=['POST'])
@@ -65,10 +77,10 @@ def find():
     try:
         word = request.args.get('word')
         flashcard = mongo.db.flashcards.find_one({'word': word})
-        if flashcard:
-            return jsonify({'word': flashcard['word'], 'meaning': flashcard['meaning'], 'figure_of_speech': flashcard['figure_of_speech']})
+        if flashcard: 
+            return render_template('find.html', flashcard=flashcard)
         else:
-            return jsonify({'error': 'Word not found'})
+            return render_template('index.html', error="Word not found")
     except Exception as e:
         app.logger.error(f"Error finding flashcard: {e}")
         return jsonify({'error': f"Error finding flashcard: {e}"})
@@ -171,7 +183,9 @@ def search():
         word = request.args.get('word')
         flashcard = mongo.db.flashcards.find_one({'word': word})
         if flashcard:
-            return render_template('index.html', flashcard=flashcard)
+            #return render_template('index.html', flashcard=flashcard)
+            return jsonify({'word': flashcard['word'], 'meaning': flashcard['meaning'], 'figure_of_speech': flashcard['figure_of_speech']})
+
         else:
             return render_template('index.html', error="Word not found")
     except Exception as e:

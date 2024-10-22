@@ -5,16 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flashcards</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
 </head>
 <body>
    
     <div class="flex-container">
         
-        <h1>Dictionary Flashcards</h1>
+        <h1>Vocabulary Flashcards</h1>
+            <form action="/find" method="POST">
+                <input type="text" name="word" placeholder="Word to Find" required>
+                <button type="submit">Find Word</button>
+            </form>
         <nav class="nav">
-            <button onclick="location.href='/search'" class="nav-button">Find</button>
-            <button onclick="location.href='/modify'" class="nav-button">View</button>
-            <button onclick="location.href='/quiz'" class="nav-button">Test</button>
+
+            <button onclick="location.href='/modify'" class="nav-button">View Wordbank</button>
+            <button onclick="location.href='/quiz'" class="nav-button">Quiz</button>
         </nav>
         <div class="container">
             {% if flashcard %}
@@ -27,5 +32,19 @@
             <a href="/" class="back-link">Random Flashcard</a>
         </div>
     </div>
+
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Find a Word</h2>
+            <form id="searchForm">
+                <input type="text" id="searchWord" name="word" placeholder="Enter word" required>
+                <button type="submit">Search</button>
+            </form>
+            <div id="searchResult"></div>
+        </div>
+    </div>
+
+    
 </body>
 </html>

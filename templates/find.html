@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        {% if flashcard %}
+            <div class="word">{{ flashcard.word }}</div>
+            <div class="figure-of-speech">{{ flashcard.figure_of_speech }}</div>
+            <div class="meaning">{{ flashcard.meaning }}</div>
+        {% else %}
+        <p class="error">{{ error }}</p>
+        {% endif %}
+        <a href="/" class="back-link">Random Flashcard</a>
+    </div>
+    
+    
+</body>
+</html>
