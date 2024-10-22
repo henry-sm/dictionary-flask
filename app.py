@@ -47,15 +47,12 @@ def findel_word():
         word = request.form.get('word')
         #flashcard = mongo.db.flashcards.find_one({'word': word})
         result = mongo.db.flashcards.delete_one({'word': word})
-        
+        print(result)
         # page is undefined ...?
  
 
         if result:
-            if result.deleted_count:
                 return render_template('modify.html', flashcards=mongo.db.flashcards.find(), message=f"Flashcard '{word}' deleted")
-            else:
-                return render_template('modify.html', flashcards=mongo.db.flashcards.find(), warning="Word not in database")
         else:
             return render_template('modify.html', flashcards=mongo.db.flashcards.find(), warning="Word not found")
         
@@ -166,6 +163,20 @@ def check_db():
     except Exception as e:
         app.logger.error(f"Database connection failed: {e}")
         return f"Database connection failed: {e}"
+
+
+@app.route('/search', methods=['GET'])
+def search():
+    try:
+        word = request.args.get('word')
+        flashcard = mongo.db.flashcards.find_one({'word': word})
+        if flashcard:
+            return render_template('index.html', flashcard=flashcard)
+        else:
+            return render_template('index.html', error="Word not found")
+    except Exception as e:
+        app.logger.error(f"Error searching flashcard: {e}")
+        return f"Error searching flashcard: {e}"
 
 
 

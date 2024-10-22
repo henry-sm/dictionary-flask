@@ -5,13 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script>
+
+    function win(){
+    alert("WRONG!");
+    }
+
+    function los(){
+    alert("RIGHT!");
+    }
+    </script>
 </head>
 <body>
     <div class="container">
-        <h1>Question </h1>
+        <h1>Question : 1+1 = ? </h1>
         <nav class="nav">
-            <button  class="nav-button">OPTION 1</button>
-            <button  class="nav-button">OPTION 2</button>
+            <button  class="nav-button" onclick="win()"> 1</button>
+            <button  class="nav-button" onclick="los()"> 2</button>
         </nav>
         <a href="/" class="back-link">Back to Home</a>
     </div>
