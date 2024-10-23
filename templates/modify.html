@@ -46,9 +46,9 @@
                 <tbody>
                     {% for flashcard in flashcards %}
                         <tr>
-                            <td>{{ flashcard.word }}</td>
-                            <td>{{ flashcard.meaning }}</td>
-                            <td>{{ flashcard.figure_of_speech }}</td>
+                            <td class="editable" data-id="{{ flashcard._id }}" data-field="word">{{ flashcard.word }}</td>
+                            <td class="editable" data-id="{{ flashcard._id }}" data-field="meaning">{{ flashcard.meaning }}</td>
+                            <td class="editable" data-id="{{ flashcard._id }}" data-field="figure_of_speech">{{ flashcard.figure_of_speech }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -71,7 +71,69 @@
             {% endif %}
         </div>
 
+
+
         <a href="/" class="back-link">Back to Home</a>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            //make it external js soon
+            
+            const table = document.getElementById('flashcardsTable');
+
+            table.addEventListener('dblclick', function(event) {
+                const target = event.target;
+                if (target.classList.contains('editable')) {
+                    const originalValue = target.textContent;
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.value = originalValue;
+                    input.classList.add('editable');
+                    target.textContent = '';
+                    target.appendChild(input);
+                    input.focus();
+
+                    input.addEventListener('blur', function() {
+                        const newValue = input.value;
+                        target.textContent = newValue;
+
+                        if (newValue !== originalValue) {
+                            const id = target.getAttribute('data-id');
+                            const field = target.getAttribute('data-field');
+                            updateFlashcard(id, field, newValue);
+                        }
+                    });
+
+                    input.addEventListener('keydown', function(event) {
+                        if (event.key === 'Enter') {
+                            input.blur();
+                        }
+                    });
+                }
+            });
+
+            function updateFlashcard(id, field, value) {
+                fetch(`/update_flashcard`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ id, field, value })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('Flashcard updated successfully');
+                    } else {
+                        console.error('Error updating flashcard:', data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error updating flashcard:', error);
+                });
+            }
+        });
+    </script>
 </body>
 </html>

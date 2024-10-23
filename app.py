@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for
 from flask_pymongo import PyMongo
+from bson.objectid import ObjectId
 import random, traceback
 
 app = Flask(__name__)
@@ -187,7 +188,27 @@ def check_db():
         app.logger.error(f"Database connection failed: {e}")
         return f"Database connection failed: {e}"
 
+@app.route('/update_flashcard', methods=['POST'])
+def update_flashcard():
+    try:
+        data = request.get_json()
+        flashcard_id = data.get('id')
+        field = data.get('field')
+        value = data.get('value')
 
+        if not flashcard_id or not field or not value:
+            return jsonify({'error': 'Invalid data'}), 400
+
+    
+        mongo.db.flashcards.update_one(
+            {'_id': ObjectId(flashcard_id)},
+            {'$set': {field: value}}
+        )
+        return jsonify({'success': True})
+    except Exception as e:
+        app.logger.error(f"Error updating flashcard: {e}")
+        return jsonify({'error': f"Error updating flashcard: {e}"}), 500
+    
 @app.route('/search', methods=['GET'])
 def search():
     try:
