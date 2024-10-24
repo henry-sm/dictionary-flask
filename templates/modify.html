@@ -18,7 +18,7 @@
             <input type="text" name="word" placeholder="Word" required>
             <input type="text" name="meaning" placeholder="Meaning" required>
             <input type="text" name="figure_of_speech" placeholder="Figure of Speech" required>
-            <button type="submit">Add Flashcard</button>
+            <button type="submit" onclick="addsuccessful()">Add Flashcard</button>
         </form>
 
 
@@ -77,9 +77,13 @@
     </div>
 
     <script>
+
+        function addsuccessful(){
+            alert("Word Added Successfully");
+        }
         document.addEventListener('DOMContentLoaded', function() {
             //make it external js soon
-            
+
             const table = document.getElementById('flashcardsTable');
 
             table.addEventListener('dblclick', function(event) {
